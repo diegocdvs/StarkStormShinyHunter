@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Pokémon game data / personal state
+*.gba
+*.gbc
+*.gb
+*.nds
+*.3ds
+*.cia
+*.xci
+*.nsp
+*.sav
+*.srm
+*.dsv
+*.state
+*.state*
+roms/
+saves/
+states/
+
+# Logs / runtime artifacts
+logs/
+artifacts/
+output/
+*.log
+
+# Local config
+config/local.*
+config/private.*
