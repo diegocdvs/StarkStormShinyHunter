@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StarkStorm Shiny Living Dex Tracker</title>
+  <style>
+    :root{
+      --bg:#0b1020;--panel:#121a2f;--panel2:#18233f;--text:#eef3ff;--muted:#9aabc9;
+      --line:#263455;--accent:#ffd45a;--good:#62d89b;--warn:#ffb86b;--danger:#ff6b7f;
+      --shadow:0 16px 40px rgba(0,0,0,.28);--radius:18px;
+    }
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#08101f,#0b1020 35%,#0a0f1a);color:var(--text);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    button,input,select,textarea{font:inherit}.app{max-width:1480px;margin:auto;padding:24px}
+    .topbar{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.brand h1{margin:0;font-size:28px}.brand p{margin:5px 0 0;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 13px;border-radius:12px;cursor:pointer}.btn.primary{background:var(--accent);color:#1d1a0c;border-color:transparent;font-weight:700}.btn:hover{filter:brightness(1.08)}
+    .grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:14px}.card{background:linear-gradient(180deg,var(--panel),#10182b);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stat{padding:16px}.stat .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.stat .v{font-size:25px;font-weight:800;margin-top:5px}.bar{height:8px;background:#0b1325;border-radius:999px;overflow:hidden;margin-top:10px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#fff0a1);width:0}
+    .toolbar{display:grid;grid-template-columns:1.3fr repeat(4,minmax(120px,.5fr));gap:10px;padding:14px;margin-bottom:14px}.field{display:flex;flex-direction:column;gap:6px}.field label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#0c1428;color:var(--text);border-radius:11px;padding:10px 11px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#6b7da8}
+    .main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px}.dex{padding:14px;min-height:640px}.dex-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.dex-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;max-height:72vh;overflow:auto;padding-right:4px}
+    .mon{border:1px solid var(--line);background:#0d162a;border-radius:14px;padding:12px;cursor:pointer;transition:.15s}.mon:hover{transform:translateY(-1px);border-color:#51658f}.mon.caught{border-color:rgba(98,216,155,.55);background:linear-gradient(180deg,rgba(98,216,155,.12),#0d162a)}.mon.hunting{border-color:rgba(255,212,90,.65)}
+    .mon-top{display:flex;justify-content:space-between;gap:8px}.dexno{color:var(--muted);font-size:12px}.name{font-weight:800;margin-top:2px}.badge{font-size:10px;padding:4px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}.badge.good{color:var(--good);border-color:rgba(98,216,155,.35)}.badge.hunt{color:var(--accent);border-color:rgba(255,212,90,.4)}
+    .meta{margin-top:10px;color:var(--muted);font-size:12px;display:grid;gap:3px}.side{padding:16px;position:sticky;top:14px;height:max-content}.side h2{margin:0 0 4px}.side .sub{color:var(--muted);margin-bottom:16px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.side .btns{display:flex;gap:8px;margin-top:12px}.hint{margin-top:14px;padding:11px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px}
+    .genchips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#0c1428;color:var(--muted);cursor:pointer}.chip.active{color:#171307;background:var(--accent);border-color:transparent;font-weight:800}
+    .empty{padding:50px;text-align:center;color:var(--muted)}
+    @media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}.side{position:static}.dex-list{max-height:none}}
+    @media(max-width:620px){.app{padding:14px}.topbar{flex-direction:column}.stats,.toolbar{grid-template-columns:1fr}.dex-list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><h1>✨ StarkStorm Shiny Living Dex</h1><p>Tracker local para planejar, registrar e auditar a Shiny Living Dex do projeto.</p></div>
+    <div class="actions">
+      <button class="btn" id="exportBtn">Exportar JSON</button>
+      <label class="btn" for="importFile">Importar JSON</label><input id="importFile" type="file" accept="application/json" hidden>
+      <button class="btn primary" id="addCurrentBtn">Registrar captura</button>
+    </div>
+  </div>
+
+  <section class="grid stats">
+    <div class="card stat"><div class="k">Progresso geral</div><div class="v" id="overall">0 / 649</div><div class="bar"><span id="overallBar"></span></div></div>
+    <div class="card stat"><div class="k">Capturados</div><div class="v" id="caughtCount">0</div></div>
+    <div class="card stat"><div class="k">Em hunt</div><div class="v" id="huntCount">0</div></div>
+    <div class="card stat"><div class="k">Duplicatas</div><div class="v" id="dupeCount">0</div></div>
+    <div class="card stat"><div class="k">Último shiny</div><div class="v" style="font-size:18px" id="lastShiny">—</div></div>
+  </section>
+
+  <section class="card toolbar">
+    <div class="field"><label>Buscar</label><input id="search" placeholder="Nome ou número da Pokédex"></div>
+    <div class="field"><label>Status</label><select id="statusFilter"><option value="all">Todos</option><option value="missing">Faltando</option><option value="hunting">Em hunt</option><option value="caught">Capturado</option></select></div>
+    <div class="field"><label>Jogo de origem</label><select id="gameFilter"><option value="all">Todos</option></select></div>
+    <div class="field"><label>Ball</label><select id="ballFilter"><option value="all">Todas</option><option>Luxury Ball</option><option>Poké Ball</option><option>Safari Ball</option><option>Apriball</option><option>Outra</option></select></div>
+    <div class="field"><label>Ordenar</label><select id="sort"><option value="dex">National Dex</option><option value="missing">Faltando primeiro</option><option value="recent">Capturas recentes</option></select></div>
+  </section>
+
+  <div class="main">
+    <section class="card dex">
+      <div class="dex-head"><div><strong>National Dex</strong><div class="genchips" id="genchips"></div></div><span id="visibleCount" class="dexno"></span></div>
+      <div class="dex-list" id="dexList"></div>
+    </section>
+
+    <aside class="card side">
+      <h2 id="detailName">Selecione um Pokémon</h2><div class="sub" id="detailDex">Escolha um card para editar os dados.</div>
+      <input type="hidden" id="selectedDex">
+      <div class="row">
+        <div class="field"><label>Status</label><select id="detailStatus"><option value="missing">Faltando</option><option value="hunting">Em hunt</option><option value="caught">Capturado</option></select></div>
+        <div class="field"><label>Quantidade</label><input id="quantity" type="number" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>Jogo</label><input id="game" placeholder="Ex.: Pokémon Emerald"></div>
+      <div class="field"><label>Save</label><input id="save" placeholder="Ex.: Emerald_Diego_01.sav"></div>
+      <div class="row"><div class="field"><label>Ball</label><select id="ball"><option>Luxury Ball</option><option>Poké Ball</option><option>Safari Ball</option><option>Apriball</option><option>Outra</option></select></div><div class="field"><label>Apriball</label><input id="apricornBall" placeholder="Moon Ball"></div></div>
+      <div class="row"><div class="field"><label>Método</label><input id="method" placeholder="RNG, SR, Safari..."></div><div class="field"><label>Data</label><input id="date" type="date"></div></div>
+      <div class="field"><label>Origem / encontro</label><input id="location" placeholder="Sky Pillar, Route 119..."></div>
+      <div class="field"><label>Observações</label><textarea id="notes" rows="4" placeholder="PID, frame, tentativa, natureza, detalhes da hunt..."></textarea></div>
+      <div class="btns"><button class="btn primary" id="saveEntry">Salvar</button><button class="btn" id="clearEntry">Limpar</button></div>
+      <div class="hint">Os dados ficam no <strong>localStorage</strong> deste navegador. Use Exportar JSON para backup/versionamento fora do navegador. O agente poderá atualizar este tracker automaticamente após eventos <code>SHINY_SECURED</code>.</div>
+    </aside>
+  </div>
+</div>
+<script>
+const MAX_DEX=649;
+const GENS=[{n:1,a:1,b:151},{n:2,a:152,b:251},{n:3,a:252,b:386},{n:4,a:387,b:493},{n:5,a:494,b:649}];
+const KEY='starkstorm.shinyLivingDex.v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{"entries":{},"names":{}}');
+let currentGen='all';
+const $=id=>document.getElementById(id);
+function genOf(n){return GENS.find(g=>n>=g.a&&n<=g.b)?.n||0}
+function pad(n){return String(n).padStart(3,'0')}
+function persist(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+async function loadNames(){if(Object.keys(state.names||{}).length>=MAX_DEX)return;try{const r=await fetch('https://pokeapi.co/api/v2/pokemon-species?limit=649');const j=await r.json();state.names={};j.results.forEach((x,i)=>state.names[i+1]=x.name.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join(' '));localStorage.setItem(KEY,JSON.stringify(state));render()}catch(e){console.warn('PokeAPI indisponível; usando números da Dex.',e)}}
+function entry(n){return state.entries[n]||{status:'missing',quantity:0}}
+function displayName(n){return state.names?.[n]||`Pokémon #${pad(n)}`}
+function renderGenChips(){let html=`<button class="chip ${currentGen==='all'?'active':''}" onclick="setGen('all')">Todas</button>`;GENS.forEach(g=>html+=`<button class="chip ${currentGen==g.n?'active':''}" onclick="setGen(${g.n})">Gen ${g.n}</button>`);$('genchips').innerHTML=html}
+window.setGen=g=>{currentGen=g;render()}
+function filters(){return{q:$('search').value.trim().toLowerCase(),status:$('statusFilter').value,game:$('gameFilter').value,ball:$('ballFilter').value,sort:$('sort').value}}
+function render(){renderGenChips();const f=filters();let arr=Array.from({length:MAX_DEX},(_,i)=>i+1).filter(n=>{const e=entry(n),name=displayName(n).toLowerCase();if(currentGen!=='all'&&genOf(n)!=currentGen)return false;if(f.q&&!name.includes(f.q)&&!String(n).includes(f.q))return false;if(f.status!=='all'&&e.status!==f.status)return false;if(f.game!=='all'&&e.game!==f.game)return false;if(f.ball!=='all'&&e.ball!==f.ball)return false;return true});if(f.sort==='missing')arr.sort((a,b)=>(entry(a).status==='caught')-(entry(b).status==='caught')||a-b);if(f.sort==='recent')arr.sort((a,b)=>(entry(b).date||'').localeCompare(entry(a).date||'')||a-b);
+$('visibleCount').textContent=`${arr.length} exibidos`; $('dexList').innerHTML=arr.length?arr.map(card).join(''):'<div class="empty">Nenhum Pokémon encontrado com estes filtros.</div>';refreshStats();refreshGames()}
+function card(n){const e=entry(n),cls=e.status==='caught'?'caught':e.status==='hunting'?'hunting':'';const badge=e.status==='caught'?'<span class="badge good">CAPTURADO</span>':e.status==='hunting'?'<span class="badge hunt">EM HUNT</span>':'<span class="badge">FALTANDO</span>';return `<article class="mon ${cls}" onclick="selectMon(${n})"><div class="mon-top"><div><div class="dexno">#${pad(n)} · Gen ${genOf(n)}</div><div class="name">${displayName(n)}</div></div>${badge}</div><div class="meta"><span>${e.game||'Jogo não definido'}</span><span>${e.ball||'Ball não definida'}${e.quantity>1?` · x${e.quantity}`:''}</span></div></article>`}
+window.selectMon=n=>{const e=entry(n);$('selectedDex').value=n;$('detailName').textContent=displayName(n);$('detailDex').textContent=`#${pad(n)} · Geração ${genOf(n)}`;$('detailStatus').value=e.status||'missing';$('quantity').value=e.quantity||0;$('game').value=e.game||'';$('save').value=e.save||'';$('ball').value=e.ball||'Luxury Ball';$('apricornBall').value=e.apricornBall||'';$('method').value=e.method||'';$('date').value=e.date||'';$('location').value=e.location||'';$('notes').value=e.notes||''}
+$('saveEntry').onclick=()=>{const n=+$('selectedDex').value;if(!n)return alert('Selecione um Pokémon.');state.entries[n]={status:$('detailStatus').value,quantity:+$('quantity').value||0,game:$('game').value.trim(),save:$('save').value.trim(),ball:$('ball').value,apricornBall:$('apricornBall').value.trim(),method:$('method').value.trim(),date:$('date').value,location:$('location').value.trim(),notes:$('notes').value.trim()};if(state.entries[n].status==='caught'&&state.entries[n].quantity<1)state.entries[n].quantity=1;persist()}
+$('clearEntry').onclick=()=>{const n=+$('selectedDex').value;if(!n)return;delete state.entries[n];persist();selectMon(n)}
+$('addCurrentBtn').onclick=()=>{const missing=Array.from({length:MAX_DEX},(_,i)=>i+1).find(n=>entry(n).status!=='caught');if(missing)selectMon(missing)}
+function refreshStats(){const all=Object.entries(state.entries);const caught=all.filter(([_,e])=>e.status==='caught').length,hunt=all.filter(([_,e])=>e.status==='hunting').length,dupes=all.reduce((s,[_,e])=>s+Math.max(0,(e.quantity||0)-1),0);$('overall').textContent=`${caught} / ${MAX_DEX}`;$('caughtCount').textContent=caught;$('huntCount').textContent=hunt;$('dupeCount').textContent=dupes;$('overallBar').style.width=`${caught/MAX_DEX*100}%`;const last=all.filter(([_,e])=>e.status==='caught'&&e.date).sort((a,b)=>b[1].date.localeCompare(a[1].date))[0];$('lastShiny').textContent=last?`${displayName(+last[0])} · ${last[1].date}`:'—'}
+function refreshGames(){const sel=$('gameFilter'),cur=sel.value;const games=[...new Set(Object.values(state.entries).map(e=>e.game).filter(Boolean))].sort();sel.innerHTML='<option value="all">Todos</option>'+games.map(g=>`<option>${g}</option>`).join('');if([...sel.options].some(o=>o.value===cur))sel.value=cur}
+['search','statusFilter','gameFilter','ballFilter','sort'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`starkstorm-shiny-living-dex-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
+$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.entries)throw new Error('Formato inválido');state=x;persist()}catch(err){alert('Não foi possível importar: '+err.message)}e.target.value=''}
+render();loadNames();
+</script>
+</body>
+</html>
