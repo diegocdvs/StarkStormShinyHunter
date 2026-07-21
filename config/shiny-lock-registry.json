@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1",
+  "policy": {
+    "default": "fail_closed",
+    "canonical_save_mutation": false,
+    "unlocked_hunt_requires_exact_rom_identity": true
+  },
+  "entries": [
+    {
+      "species": "Victini",
+      "dex": 494,
+      "games": ["Black", "White"],
+      "encounter": "Liberty Garden event encounter",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": true,
+      "notes": "Implement only after exact revision and lock mechanism are mapped; event availability is a separate prerequisite."
+    },
+    {
+      "species": "Reshiram",
+      "dex": 643,
+      "games": ["Black"],
+      "encounter": "N's Castle / Dragonspiral Tower exception",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": true,
+      "notes": "Story planner must avoid accidentally triggering the full-party/full-storage location exception unless intentionally selected."
+    },
+    {
+      "species": "Zekrom",
+      "dex": 644,
+      "games": ["White"],
+      "encounter": "N's Castle / Dragonspiral Tower exception",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": true,
+      "notes": "Story planner must avoid accidentally triggering the full-party/full-storage location exception unless intentionally selected."
+    },
+    {
+      "species": "Zoroark",
+      "dex": 571,
+      "games": ["Black", "White"],
+      "encounter": "Lostlorn Forest event encounter",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": false,
+      "notes": "Encounter-specific lock; species can be shiny by other acquisition paths. Promote to UNLOCKED_HUNT only if preserving this exact encounter is a project goal."
+    },
+    {
+      "species": "Zekrom",
+      "dex": 644,
+      "games": ["Black 2"],
+      "encounter": "Dragonspiral Tower post-game",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": true,
+      "notes": "Requires post-game N's Castle/Dragonspiral progression; Japanese B2W2 Frozen Zoroark glitch is a story-access risk."
+    },
+    {
+      "species": "Reshiram",
+      "dex": 643,
+      "games": ["White 2"],
+      "encounter": "Dragonspiral Tower post-game",
+      "lock_status": "CONFIRMED",
+      "canonical_shiny": false,
+      "unlocked_hunt_candidate": true,
+      "notes": "Requires post-game N's Castle/Dragonspiral progression; Japanese B2W2 Frozen Zoroark glitch is a story-access risk."
+    },
+    {
+      "species": "Kyurem",
+      "dex": 646,
+      "games": ["Black 2", "White 2"],
+      "encounter": "Giant Chasm post-game capture",
+      "lock_status": "PENDING",
+      "canonical_shiny": null,
+      "unlocked_hunt_candidate": null,
+      "notes": "Do not infer lock state from the forced fusion boss or from Reshiram/Zekrom. Validate the actual capturable encounter separately."
+    }
+  ]
+}
