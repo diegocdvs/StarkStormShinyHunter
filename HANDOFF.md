@@ -29,7 +29,7 @@ Build a modular agent that can autonomously obtain shiny Pokémon across Pokémo
 - Hunt Route Planner: orders campaign targets and resource preparation to reduce backtracking.
 - Capture Assurance: protects rare encounters against flee, self-KO, Roar/Whirlwind, Teleport, Struggle, Safari failure and input errors.
 - Save Orchestrator: fingerprints, inventories, clones, selects and switches among saves safely.
-- Breeding Pokémon Repository: catalog of donor saves containing breeding parents; trades/transfers a needed parent into the target breeding save using generation-compatible mechanics.
+- Breeding Pokémon Repository: private catalog of donor saves containing breeding parents. When a target parent is absent from the destination breeding save, locate a compatible donor save/game and use a generation-compatible legitimate trade/transfer path. Example requirement: for Bulbasaur breeding in Gen II, obtain Bulbasaur from an indexed compatible donor/Gen I save, capture or select a disposable exchange Pokémon on the destination side, execute the trade, verify the received Bulbasaur, record transfer provenance, then start breeding. Save binaries remain private; Git tracks manifests/schemas only.
 - Shiny Lock Registry / Unlocked Hunt Mode: encounter-level lock knowledge and minimal validated unlock workflows in isolated alternate saves.
 - Shiny Living Dex Tracker: HTML dashboard, provenance and automatic update only after SHINY_SECURED.
 - Discord integration: alerts/interaction without committing secrets.
@@ -48,7 +48,7 @@ Generation-specific checkpoint because shiny/PID determination timing differs. A
 Gen IV onward. Prefer specialized completed saves when available. B2W2 completed saves with Shiny Charm are priority breeding assets where applicable. Validate parent origin languages; maintain reusable foreign-parent library.
 
 ### Gen II breeding
-Prioritize obtaining a shiny Ditto breeding asset first, then use the generation's DV inheritance mechanics for high-efficiency shiny breeding. Research/implementation must validate the exact 1/64-compatible parent pair rules rather than assuming every pairing qualifies. A Red Gyarados → Gen I → Ditto transformation/trade-back workflow has been requested as an optional bootstrap path and must be independently validated before automation.
+Prioritize obtaining a shiny Ditto breeding asset first, then use the generation's DV inheritance mechanics for high-efficiency shiny breeding. Research/implementation must validate the exact 1/64-compatible parent pair rules rather than assuming every pairing qualifies. A Red Gyarados → Gen I → Ditto transformation/trade-back workflow has been requested as an optional bootstrap path and must be independently validated before automation. Breed intensively where useful for Living Dex/evolution-family coverage rather than stopping automatically after the first shiny.
 
 ### Platinum Poké Radar
 Each hunt specification can require species + gender + nature. Keep every shiny, but continue the chain until a shiny matches requested attributes. Validate a safe savestate point before each encounter/patch interaction so restoration does not invalidate chain/RNG state. Use Synchronize where mechanically beneficial and verified.
@@ -60,6 +60,9 @@ Each hunt specification can require species + gender + nature. Keep every shiny,
 - UNLOCKED_HUNT_SAVE: isolated lineage for shiny-lock removal.
 
 Each save manifest should include game/version/region/language, trainer metadata when safe, progress, Pokédex state, key resources, capabilities, ROM fingerprint compatibility, parent inventory summary, lineage, provenance and checksum/hash.
+
+## Breeding repository transfer provenance
+Every donor-parent operation must record: target species, donor save identifier, donor game/generation/language, source slot/box when available, destination save identifier, transfer/trade mechanism, disposable exchange Pokémon if used, pre/post fingerprints, validation result, and resulting breeding-parent identity. Never mutate the donor MASTER_SAVE; operate on clones when a transfer changes state. Prefer actual supported trade/transfer mechanics over direct Pokémon-byte injection when preserving acquisition provenance is a project goal.
 
 ## Generation notes
 - Gen I: no visible native shiny mechanic. Track retroactive shiny-compatible DV provenance where relevant and Gen I↔II transfer workflows.
