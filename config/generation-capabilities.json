@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "generations": {
+    "1": {
+      "games": ["Red", "Blue", "Yellow"],
+      "native_shiny": false,
+      "shiny_model": "NONE_NATIVE",
+      "tracker_origin_modes": ["RETROACTIVE_SHINY"],
+      "requires_generation_specific_rng": true,
+      "requires_story_progression": true
+    },
+    "2": {
+      "games": ["Gold", "Silver", "Crystal"],
+      "native_shiny": true,
+      "shiny_model": "DV_BASED",
+      "tracker_origin_modes": ["CANONICAL", "RNG_OPTIMIZED"],
+      "requires_generation_specific_rng": true,
+      "requires_story_progression": true
+    },
+    "3": {
+      "games": ["Ruby", "Sapphire", "Emerald", "FireRed", "LeafGreen"],
+      "native_shiny": true,
+      "shiny_model": "PID_TID_SID",
+      "tracker_origin_modes": ["CANONICAL", "RNG_OPTIMIZED", "UNLOCKED_HUNT"],
+      "requires_generation_specific_rng": true,
+      "requires_story_progression": true
+    },
+    "4": {
+      "games": ["Diamond", "Pearl", "Platinum", "HeartGold", "SoulSilver"],
+      "native_shiny": true,
+      "shiny_model": "PID_TID_SID",
+      "tracker_origin_modes": ["CANONICAL", "RNG_OPTIMIZED", "CUTE_CHARM", "UNLOCKED_HUNT"],
+      "requires_generation_specific_rng": true,
+      "requires_story_progression": true
+    },
+    "5": {
+      "games": ["Black", "White", "Black 2", "White 2"],
+      "native_shiny": true,
+      "shiny_model": "PID_TID_SID_GEN5",
+      "tracker_origin_modes": ["CANONICAL", "RNG_OPTIMIZED", "UNLOCKED_HUNT"],
+      "requires_generation_specific_rng": true,
+      "requires_story_progression": true
+    }
+  }
+}
