@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://starkstorm.local/schemas/save-registry.schema.json",
+  "title": "StarkStorm Save Registry",
+  "type": "object",
+  "required": ["schema_version", "saves"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "saves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "class", "game", "generation", "private_asset_ref", "immutable", "capabilities"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+          "class": {"enum": ["MASTER_SAVE", "WORKING_SAVE", "SPECIALIZED_SAVE", "UNLOCKED_HUNT_SAVE"]},
+          "game": {"type": "string"},
+          "generation": {"type": "integer", "minimum": 1, "maximum": 5},
+          "version": {"type": "string"},
+          "region": {"type": "string"},
+          "language": {"type": "string"},
+          "private_asset_ref": {"type": "string", "description": "Opaque private-storage reference; never embed save bytes or secrets."},
+          "immutable": {"type": "boolean"},
+          "parent_save_id": {"type": ["string", "null"]},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
+          "rom_fingerprint": {"type": ["string", "null"]},
+          "pokedex_complete": {"type": "boolean", "default": false},
+          "shiny_charm": {"type": "boolean", "default": false},
+          "capabilities": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["STORY", "WILD_HUNT", "STATIC_HUNT", "LEGENDARY_HUNT", "BREEDING", "MASUDA", "POKERADAR", "CUTE_CHARM", "SHINY_CHARM", "TRANSFER_SOURCE", "TRANSFER_DESTINATION", "UNLOCKED_HUNT"]}
+          },
+          "notes": {"type": "string"}
+        },
+        "allOf": [
+          {"if": {"properties": {"class": {"const": "MASTER_SAVE"}}}, "then": {"properties": {"immutable": {"const": true}}}},
+          {"if": {"properties": {"shiny_charm": {"const": true}}}, "then": {"properties": {"generation": {"minimum": 5}}}}
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
