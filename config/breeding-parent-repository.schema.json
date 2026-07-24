@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://starkstorm.local/schemas/breeding-parent-repository.schema.json",
+  "title": "StarkStorm Breeding Parent Repository",
+  "type": "object",
+  "required": ["schema_version", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entry_id", "species", "source_save_id", "source_generation", "availability", "provenance"],
+        "properties": {
+          "entry_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+          "species": {"type": "string"},
+          "form": {"type": ["string", "null"]},
+          "gender": {"enum": ["MALE", "FEMALE", "GENDERLESS", "UNKNOWN"]},
+          "nature": {"type": ["string", "null"]},
+          "language": {"type": ["string", "null"]},
+          "shiny": {"type": ["boolean", "null"]},
+          "source_save_id": {"type": "string"},
+          "source_generation": {"type": "integer", "minimum": 1, "maximum": 5},
+          "source_game": {"type": ["string", "null"]},
+          "location_hint": {
+            "type": "object",
+            "properties": {
+              "storage": {"enum": ["PARTY", "BOX", "DAYCARE", "UNKNOWN"]},
+              "box": {"type": ["integer", "null"], "minimum": 1},
+              "slot": {"type": ["integer", "null"], "minimum": 1}
+            },
+            "additionalProperties": false
+          },
+          "availability": {"enum": ["AVAILABLE", "RESERVED", "IN_TRANSFER", "UNAVAILABLE", "UNVERIFIED"]},
+          "roles": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["SPECIES_PARENT", "FOREIGN_PARENT", "DITTO", "SHINY_DITTO", "DV_PARENT", "TRANSFER_DONOR"]}
+          },
+          "compatible_destination_generations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 1, "maximum": 5}
+          },
+          "provenance": {
+            "type": "object",
+            "required": ["acquisition_type"],
+            "properties": {
+              "acquisition_type": {"enum": ["IN_GAME", "TRADE", "TRANSFER", "BREEDING", "UNKNOWN"]},
+              "notes": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
