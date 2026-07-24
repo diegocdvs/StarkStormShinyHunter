@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["schema_version", "saves"],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
+    "schema_version": {"const": "1.1.0"},
     "saves": {
       "type": "array",
       "items": {
@@ -19,23 +19,27 @@
           "version": {"type": "string"},
           "region": {"type": "string"},
           "language": {"type": "string"},
-          "private_asset_ref": {"type": "string", "description": "Opaque private-storage reference; never embed save bytes or secrets."},
+          "trainer_alias": {"type": ["string", "null"]},
+          "private_asset_ref": {"type": "string", "description": "Opaque private-storage reference; never embed save bytes, credentials, tokens, or signed URLs."},
           "immutable": {"type": "boolean"},
           "parent_save_id": {"type": ["string", "null"]},
           "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
           "rom_fingerprint": {"type": ["string", "null"]},
           "pokedex_complete": {"type": "boolean", "default": false},
+          "story_stage": {"type": ["string", "null"]},
           "shiny_charm": {"type": "boolean", "default": false},
           "capabilities": {
             "type": "array",
             "uniqueItems": true,
-            "items": {"enum": ["STORY", "WILD_HUNT", "STATIC_HUNT", "LEGENDARY_HUNT", "BREEDING", "MASUDA", "POKERADAR", "CUTE_CHARM", "SHINY_CHARM", "TRANSFER_SOURCE", "TRANSFER_DESTINATION", "UNLOCKED_HUNT"]}
+            "items": {"enum": ["STORY", "STORY_COMPLETE", "WILD_HUNT", "STATIC_HUNT", "LEGENDARY_HUNT", "BREEDING", "MASUDA", "POKERADAR", "CUTE_CHARM", "SHINY_CHARM", "GEN2_SHINY_DITTO", "DONOR_PARENT", "TRANSFER_SOURCE", "TRANSFER_DESTINATION", "UNLOCKED_HUNT"]}
           },
+          "parent_inventory_ref": {"type": ["string", "null"], "description": "Repository-relative manifest path for indexed breeding/donor Pokémon; never the save binary itself."},
           "notes": {"type": "string"}
         },
         "allOf": [
           {"if": {"properties": {"class": {"const": "MASTER_SAVE"}}}, "then": {"properties": {"immutable": {"const": true}}}},
-          {"if": {"properties": {"shiny_charm": {"const": true}}}, "then": {"properties": {"generation": {"minimum": 5}}}}
+          {"if": {"properties": {"shiny_charm": {"const": true}}}, "then": {"properties": {"generation": {"minimum": 5}}}},
+          {"if": {"properties": {"capabilities": {"contains": {"const": "GEN2_SHINY_DITTO"}}}}, "then": {"properties": {"generation": {"const": 2}}}}
         ],
         "additionalProperties": false
       }
